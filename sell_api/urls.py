@@ -1,7 +1,6 @@
 from django.urls import path
-from rest_framework_jwt.views import refresh_jwt_token, verify_jwt_token
 
-from sell_api.views import CategoryViews, ItemViews, SubcategoryViews, UserListView
+from sell_api.views import ItemSingleViews, UserListView, CategoryViews, ItemCreate, ItemCountHit, ItemListViews
 from rest_framework_swagger.views import get_swagger_view
 
 schema_view = get_swagger_view(title='Sell API')
@@ -9,13 +8,10 @@ schema_view = get_swagger_view(title='Sell API')
 urlpatterns = [
     path('home/', schema_view, name='home'),
     path('category/', CategoryViews.as_view()),
-    path('category/int<pk:>/', CategoryViews.as_view()),
-    path('subcategory/', SubcategoryViews.as_view()),
-    path('subcategory/int<pk:>/', SubcategoryViews.as_view()),
-    path('item/', ItemViews.as_view()),
-    path('category/int<pk:>/', ItemViews.as_view()),
-    path('api-token-refresh/', refresh_jwt_token),
-    path('api-token-verify/', verify_jwt_token),
+    path('item/', ItemListViews.as_view()),
+    path('item/count-hit/<int:pk>/', ItemCountHit.as_view()),
+    path('item/<int:pk>/', ItemSingleViews.as_view()),
+    path('item/create/', ItemCreate.as_view()),
     path('users/', UserListView.as_view(), name='UserListView'),
 
 ]

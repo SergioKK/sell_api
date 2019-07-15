@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block body_block %}
+{% load mptt_tags %}
+{% full_tree_for_model sell_api.Category as nodes %}
+<ul class="root">
+    {% recursetree nodes %}
+    <li>
+        {{ node.title }}
+        {% if not node.is_leaf_node %}
+        <ul class="children">
+            {{ children }}
+        </ul>
+        {% endif %}
+    </li>
+    {% endrecursetree %}
+</ul>
+
+{% endblock %}

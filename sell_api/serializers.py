@@ -6,7 +6,7 @@ from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from rest_framework_jwt.serializers import JSONWebTokenSerializer
 
-from sell_api.models import Category, Subcategory, Items
+from sell_api.models import Category, Items, Users
 
 User = get_user_model()
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
@@ -18,19 +18,13 @@ jwt_get_username_from_payload = api_settings.JWT_PAYLOAD_GET_USERNAME_HANDLER
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ('title', 'subcategory')
+        fields = ('title', 'description', 'parent',)
 
 
-class SubcategorySerializer(serializers.ModelSerializer):
+class UsersSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Subcategory
-        fields = "__all__"
-
-
-class ItemSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Items
-        fields = ('title', 'users', 'category', 'price')
+        model = User
+        fields = ("username",)
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -77,6 +71,15 @@ class UserSerializer(serializers.ModelSerializer):
                 field.set(value)
 
         return instance
+
+
+class ItemSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(many=True)
+    users = UsersSerializer(many=True)
+
+    class Meta:
+        model = Items
+        fields = ('title', 'users', 'category', 'description', 'price', 'photo', 'time_added',)
 
 
 class CustomJWTSerializer(JSONWebTokenSerializer):

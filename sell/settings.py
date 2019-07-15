@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'sell_api',
     'mptt',
+    'hitcount',
 ]
 
 MIDDLEWARE = [
@@ -143,3 +144,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'sell_api/media')
 MPTT_ADMIN_LEVEL_INDENT = 20
 
 LOGIN_URL = 'sell_api/user_login/'
+
+HITCOUNT_KEEP_HIT_ACTIVE = {'minutes': 60}
+HITCOUNT_HITS_PER_IP_LIMIT = 0  # unlimited
+HITCOUNT_EXCLUDE_USER_GROUP = ()  # not used
+HITCOUNT_KEEP_HIT_IN_DATABASE = {'seconds': 10}

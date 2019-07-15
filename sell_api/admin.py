@@ -1,6 +1,5 @@
 from django.contrib import admin
-from sell_api.models import Category, Items, Subcategory
+from sell_api.models import Category, Items
 
 admin.site.register(Category)
-admin.site.register(Subcategory)
 admin.site.register(Items)
