@@ -1,9 +1,22 @@
 {% extends 'base.html' %}
 {% block body_block %}
-<form method="get">
-    <button type="submit" class="btn btn-sm btn-primary btn-raised mr-3">{% trans 'Сортировать' %}</button>
-    <input name="sort" type="checkbox" value="title" {{ by_price }}>{% trans "по заголовку" %}
-    <input name="sort" type="checkbox" value="pub_date" {{ by_time_added }}>{% trans "по дате" %}
-    <input name="sort" type="checkbox" value="views" {{ by_views }}>{% trans "по просмотрам" %}
-</form>
+<th><a href="?order_by=price">Price</a></th>
+<th><a href="?order_by=time_added">Time added</a></th>
+<th><a href="?order_by=visit_count">Visits</a></th>
+
+{% for item in items %}
+<div class="row pt-3">
+    <div class="col-2" onclick="window.location='{% url 'item_detail' item.id %}';" style="cursor:pointer">
+
+    </div>
+    <div class="col-6" onclick="window.location='{% url 'item_detail' item.id %}';" style="cursor:pointer">
+        <h1>Item {{item.id}}: {{ item.price }} {{ item.time_added }} {{ item.visit_count }}</h1>
+    </div>
+    <div class="col-4" onclick="window.location='{% url 'item_detail' item.id %}';" style="cursor:pointer">
+
+    </div>
+</div>
+
+{% endfor %}
+
 {% endblock %}

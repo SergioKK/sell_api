@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block body_block %}
+<h1>users: {% for users in items.users.all %}{{ user }} {% endfor %}</h1>
+<h1>category: {% for category in items.category.all %}{{ category }} {% endfor %}</h1>
+<h1>title: {{items.title}}</h1>
+<h1>price: {{items.price}}</h1>
+<h1>description: {{items.description}}</h1>
+<h1>photo: {% for photo in items.photo %}<img src="{{ photo }}"> {% endfor %}</h1>
+<h1>time_added: {{items.time_added}}</h1>
+<h1>visit_count: {{items.visit_count}}</h1>
+{% endblock %}

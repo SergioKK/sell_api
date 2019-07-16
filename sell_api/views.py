@@ -1,8 +1,10 @@
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.db.models import Count
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
+from django.views.generic import DetailView, ListView
 from rest_framework import generics
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -10,7 +12,6 @@ from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
 from rest_framework.response import Response
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
-from hitcount.views import HitCountDetailView
 
 from sell_api.models import Category, Items, Users
 from sell_api.serializers import CategorySerializer, UserSerializer, ItemSerializer
@@ -35,33 +36,21 @@ class CategoryViews(generics.ListAPIView):
     pagination_class = StandardResultsSetPagination
 
 
-class ItemListViews(generics.ListAPIView):
+class ItemSingleViews(DetailView):
     """
-    View list of items
-    """
-    permission_classes = (AllowAny,)
-    serializer_class = ItemSerializer
-    queryset = Items.objects.all().order_by('price', 'time_added')
-    pagination_class = StandardResultsSetPagination
-
-
-class ItemSingleViews(generics.RetrieveAPIView):
-    """
-    View item by 'id"
-    """
-    permission_classes = (AllowAny,)
-    serializer_class = ItemSerializer
-    queryset = Items.objects.all()
-    pagination_class = StandardResultsSetPagination
-
-
-class ItemCountHit(HitCountDetailView, ItemSingleViews):
-    """
-    Hit counter
+    View and count visits of single item
     """
     model = Items
-    count_hit = True
-    template_name = 'items_detail.html'
+    template_name = 'item.html'
+
+    # def get_object(self):
+    #     return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super(ItemSingleViews, self).get_context_data(**kwargs)
+        self.object.add_visit()
+        self.object.save()
+        return context
 
 
 class ItemCreate(generics.ListCreateAPIView):
@@ -97,8 +86,14 @@ class UserListView(generics.ListAPIView):
     serializer_class = UserSerializer
 
 
-def test(request):
-    return render(request, 'categories_and_items.html')
+@login_required
+def item_list(request):
+    """
+    Order by and view items
+    """
+    order_by = request.GET.get('order_by', "price")
+    items = Items.objects.all().order_by(order_by)
+    return render(request, 'order_by.html', {"items": items})
 
 
 @login_required
@@ -124,8 +119,3 @@ def user_login(request):
             return HttpResponse("Invalid login details given")
     else:
         return render(request, 'login.html', {})
-
-
-def item_count(request):
-    categories = Category.objects.all().annotate(item_count=Count('Category'))
-    return render(request, 'items_in_categories.html', {'categories': categories})
