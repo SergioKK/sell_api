@@ -1,10 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
-from django.db.models import Count
 from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render
-from django.views.generic import DetailView, ListView
+from django.views.generic import DetailView
 from rest_framework import generics
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -13,7 +10,7 @@ from rest_framework.response import Response
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 
-from sell_api.models import Category, Items, Users
+from sell_api.models import Category, Item, Users
 from sell_api.serializers import CategorySerializer, UserSerializer, ItemSerializer
 
 
@@ -40,11 +37,8 @@ class ItemSingleViews(DetailView):
     """
     View and count visits of single item
     """
-    model = Items
+    model = Item
     template_name = 'item.html'
-
-    # def get_object(self):
-    #     return self.request.user
 
     def get_context_data(self, **kwargs):
         context = super(ItemSingleViews, self).get_context_data(**kwargs)
@@ -59,7 +53,7 @@ class ItemCreate(generics.ListCreateAPIView):
     """
     permission_classes = (IsAuthenticated,)
     serializer_class = ItemSerializer
-    queryset = Items.objects.all()
+    queryset = Item.objects.all()
 
 
 class UserCreateView(generics.CreateAPIView):
@@ -82,24 +76,24 @@ class UserListView(generics.ListAPIView):
     View list of users
     """
     permission_classes = (IsAuthenticated,)
-    queryset = User.objects.all()
+    queryset = Users.objects.all()
     serializer_class = UserSerializer
 
 
 @login_required
 def item_list(request):
     """
-    Order by and view items
+    View and order items
     """
     order_by = request.GET.get('order_by', "price")
-    items = Items.objects.all().order_by(order_by)
+    items = Item.objects.all().order_by(order_by)
     return render(request, 'order_by.html', {"items": items})
 
 
 @login_required
 def user_logout(request):
     logout(request)
-    return HttpResponseRedirect(reverse('home'))
+    return HttpResponseRedirect(reverse('/'))
 
 
 def user_login(request):
@@ -110,7 +104,7 @@ def user_login(request):
         if user:
             if user.is_active:
                 login(request, user)
-                return HttpResponseRedirect(reverse('home'))
+                return HttpResponseRedirect(reverse('/'))
             else:
                 return HttpResponse("Your account was inactive.")
         else:

@@ -6,7 +6,7 @@ from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from rest_framework_jwt.serializers import JSONWebTokenSerializer
 
-from sell_api.models import Category, Items, Users
+from sell_api.models import Category, Item, Users
 
 User = get_user_model()
 jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
@@ -78,7 +78,7 @@ class ItemSerializer(serializers.ModelSerializer):
     users = UsersSerializer(many=True)
 
     class Meta:
-        model = Items
+        model = Item
         fields = ('title', 'users', 'category', 'description', 'price', 'photo', 'time_added',)
 
 
@@ -86,7 +86,7 @@ class CustomJWTSerializer(JSONWebTokenSerializer):
     def validate(self, attrs):
 
         password = attrs.get("password")
-        user_obj = User.objects.filter(username=attrs.get("username")).first()
+        user_obj = Users.objects.filter(username=attrs.get("username")).first()
         if user_obj is not None:
             credentials = {
                 self.username_field: attrs.get(self.username_field),
@@ -94,13 +94,13 @@ class CustomJWTSerializer(JSONWebTokenSerializer):
             }
             if all(credentials.values()):
                 try:
-                    user = User.objects.get(
+                    user = Users.objects.get(
                         username__iexact=credentials[self.username_field]
                     )
                     if not user.is_active:
-                        msg = "User account is disabled."
+                        msg = "Users account is disabled."
                         raise serializers.ValidationError(msg)
-                except User.DoesNotExist:
+                except Users.DoesNotExist:
                     pass
 
                 user = authenticate(**credentials)

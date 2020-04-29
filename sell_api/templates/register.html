@@ -7,13 +7,15 @@
         <h1>Thank you for registering!</h1>
         {% else %}
         <h1>Register Here</h1>
-        <h3>Just fill out the form.</h3>
+        <h3>Just fill out the form</h3>
         <form enctype="multipart/form-data" method="POST">
             {% csrf_token %}
-            <label for="username">Username:</label>
+            <label>Username:</label>
             <input type="text" name="username" placeholder="Username">
-            <label for="password">Password:</label>
-            <input type="password" name="password" placeholder="Password">
+            <label>Password:</label>
+            <input type="password" name="password_1" placeholder="Password">
+            <label>Email:</label>
+            <input type="email" name="email" placeholder="Email">
             <input type="submit" name="" value="Register">
         </form>
 

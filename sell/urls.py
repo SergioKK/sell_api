@@ -2,6 +2,7 @@ from django.urls import path, include
 from django.contrib import admin
 from django.conf import settings
 from rest_framework_jwt.views import ObtainJSONWebToken, refresh_jwt_token, verify_jwt_token
+from rest_framework_swagger.views import get_swagger_view
 
 from sell_api.serializers import CustomJWTSerializer
 from sell_api import views
@@ -9,8 +10,11 @@ from sell_api.views import UserCreateView
 from django.contrib.staticfiles.urls import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
+schema_view = get_swagger_view(title='Sell API')
+
 urlpatterns = [
-                  path('admin/', admin.site.urls, name='admin'),
+                  path('', schema_view, name='/'),
+                  path('admin', admin.site.urls,),
                   path('api-token-auth/', ObtainJSONWebToken.as_view(serializer_class=CustomJWTSerializer)),
                   path('api-token-refresh/', refresh_jwt_token),
                   path('api-token-verify/', verify_jwt_token),

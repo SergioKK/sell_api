@@ -1,13 +1,12 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.utils import timezone
 from django.utils.encoding import python_2_unicode_compatible
 import mptt
 from mptt.models import MPTTModel, TreeForeignKey
 
 
 class Users(models.Model):
-    user = models.ForeignKey("auth.User", on_delete=models.CASCADE)
+    user = models.OneToOneField("auth.User", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user
@@ -35,8 +34,8 @@ mptt.register(Category, order_insertion_by=['title'])
 
 
 @python_2_unicode_compatible
-class Items(models.Model):
-    users = models.ManyToManyField(User, related_name="Users")
+class Item(models.Model):
+    users = models.OneToOneField(Users, related_name="Users", on_delete=models.CASCADE)
     category = models.ManyToManyField(Category, related_name="Category")
     title = models.CharField(max_length=100)
     price = models.IntegerField()

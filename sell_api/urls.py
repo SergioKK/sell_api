@@ -6,11 +6,10 @@ from rest_framework_swagger.views import get_swagger_view
 schema_view = get_swagger_view(title='Sell API')
 
 urlpatterns = [
-    path('home/', schema_view, name='home'),
-    path('category/', CategoryViews.as_view()),
-    path('items/', item_list),
-    path('item/<int:pk>/', ItemSingleViews.as_view(), name='item_detail'),
-    path('item/create/', ItemCreate.as_view()),
-    path('users/', UserListView.as_view(), name='UserListView'),
+    path('category/', CategoryViews.as_view(), name='Category view'),
+    path('items/', item_list, name='List of items'),
+    path('item/<int:pk>/', ItemSingleViews.as_view(), name='Detail of single item'),
+    path('item/create/', ItemCreate.as_view(), name='Create new item'),
+    path('users/', UserListView.as_view(), name='List of users'),
 
 ]
